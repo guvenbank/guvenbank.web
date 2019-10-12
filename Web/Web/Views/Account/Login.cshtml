@@ -3,5 +3,58 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Login</h1>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Sekme Başlığı</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+    <body>
+        <h1>Login</h1>
+        <form>
+            <div class="form-group">
+                <input type="text" class="form-control" id="btnTcNo" placeholder="Tc No">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" id="btnPass" placeholder="Password">
+            </div>
+            <button type="button" class="btn btn-primary" id="btnLogin">Giriş Yap</button>
+        </form>
+
+        <script type="text/javascript">
+            const Url = "http://207.154.196.92:5002/api/auth/login";
+
+            $('#btnLogin').click(function () {
+                var tcNo = $('#btnTcNo').val();
+                var pass = $('#btnPass').val();
+                alert(tcNo);
+                alert(pass);
+                const data = { TC: tcNo, Password: pass };
+
+                 $.ajax({
+                    url: Url,
+                    type: "POST",
+                    data: data,
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result)
+                    },
+                    error: function (error) {
+                        console.log('Eror ${error}')
+                    }
+                });
+            });
+        </script>
+
+    </body>
+</html>
+
+
+
+
+
+
+
 
