@@ -17,108 +17,33 @@ namespace Web.Controllers
     {
         public IActionResult Index()
         {
-           
-           return View();
-        }
-
-        public IActionResult Login()
-        {
-            //LoginModel loginModel = new LoginModel();
-            //loginModel.TC = "54862355952";
-            //loginModel.Password = "123456";
-
-           
-            return View();
-
-        }
-
-        public IActionResult Register()
-        {
-
-            return View();
-        }
-
-        //[HttpPost]
-        //public IActionResult Login(LoginModel loginModel)
-        //{
-
-        //    HttpClient httpClient = new HttpClient();
-        //    httpClient.BaseAddress = new Uri("http://192.168.1.34:5002/api/auth/login");
-
-        //    string jsonData = JsonConvert.SerializeObject(loginModel);
-
-        //    var content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
-        //    HttpResponseMessage response = httpClient.PostAsync("/api/auth/login", content).Result;
-
-        //    string responseBody = response.Content.ReadAsStringAsync().Result;
-
-        //    JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
-
-
-        //    if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
-        //    {
-        //        //HttpContext.Response.Cookies.Append("token", responseJson["token"].ToString());
-        //        return RedirectToAction("Index", "Account");
-                
-        //    }
-
-        //    else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 200))
-        //    {
-        //        return RedirectToAction("Login","Account");
-        //        //databag ile şifre yada tc yanlış hatası döndür.
-        //    }
-
-        //    else
-        //    {
-        //        // login ekranına dön hata oluştu yazısı yazdır.
-        //    }
-        //    return View();
-        //}
-
-        [HttpPost]
-        public IActionResult Register(RegisterModel registerModel)
-        {
-
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("http://192.168.1.34:5002/api/auth/register");
+            httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
 
-            string jsonData = JsonConvert.SerializeObject(registerModel);
-
-            var content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = httpClient.PostAsync("/api/auth/register", content).Result;
+            HttpResponseMessage response = httpClient.GetAsync("api/transaction").Result;
 
             string responseBody = response.Content.ReadAsStringAsync().Result;
 
             JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
+            TransactionsModel transactionsModel = JsonConvert.DeserializeObject<TransactionsModel>(responseBody);
+            UserModel userModel = new UserModel();
 
-            if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
-            {
-                return RedirectToAction("Index", "Account");
-            }
+            HomePageModel homePageModel = new HomePageModel();
 
-            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 200))
-            {
-                return RedirectToAction("Register", "Account");
-                //databag ile hatayı döndür register sayfasına ve sayfada göster
-            }
+            userModel.Token = HttpContext.Session.GetString("token");
+            userModel.TC = HttpContext.Session.GetString("tc");
+            userModel.FirstName = HttpContext.Session.GetString("firstName");
+            userModel.LastName = HttpContext.Session.GetString("lastName");
+            userModel.PhoneNumber = HttpContext.Session.GetString("phoneNumber");
+            userModel.CustomerNo = Convert.ToInt32(HttpContext.Session.GetString("no"));
 
-            else
-            {
-                // register ekranına dön hata oluştu yazısı yazdır.
-            }
-            return View();
+            homePageModel.TransactionsModel = transactionsModel;
+            homePageModel.UserModel = userModel;
+
+            return View(homePageModel);
         }
 
-        //public IActionResult Accounts()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public IActionResult Accounts()
-        //{
-        //    return View();
-        //}
     }
 }

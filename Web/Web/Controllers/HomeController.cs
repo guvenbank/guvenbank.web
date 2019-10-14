@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Web.Models;
 
 namespace Web.Controllers
@@ -15,15 +16,17 @@ namespace Web.Controllers
     {
         public IActionResult Index()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");    
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjU0ODYyMzU1OTUyIiwibmJmIjoxNTcwODgzMTAyLCJleHAiOjE1NzA4ODMxNjIsImlhdCI6MTU3MDg4MzEwMn0.bhH-LL2jKn3f2VZD3Dq8n0ywiGbKYV255PbCbOcQJ_M");
+            //HttpClient httpClient = new HttpClient();
+            //httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");    
+            //httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjU0ODYyMzU1OTUyIiwibmJmIjoxNTcwODg3Njk3LCJleHAiOjE1NzA4ODc3NTcsImlhdCI6MTU3MDg4NzY5N30.7FAegeFDZPLowt_IZfdSB3wyBfbv3TOMk8gF73zls_s");
 
-            HttpResponseMessage response = httpClient.GetAsync("api/transaction").Result;
+            //HttpResponseMessage response = httpClient.GetAsync("api/transaction").Result;
 
-            string responseBody = response.Content.ReadAsStringAsync().Result;
+            //string responseBody = response.Content.ReadAsStringAsync().Result;
 
-            return View(responseBody);
+            //TransactionsModel model = JsonConvert.DeserializeObject<TransactionsModel>(responseBody);
+
+            return View(/*model*/);
         }
 
         public IActionResult Privacy()
