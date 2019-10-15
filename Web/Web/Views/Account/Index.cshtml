@@ -109,35 +109,19 @@
                                     <table class="table table-hover">
                                         <thead class="text-warning">
                                         <th>ID</th>
-                                        <th>OLUŞTURULMA TARIHI</th>
                                         <th>BAKIYE</th>
-
+                                        <th>OLUŞTURULMA TARIHI</th>
                                         </thead>
+
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Dakota Rice</td>
-                                                <td>$36,738</td>
-
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>Minerva Hooper</td>
-                                                <td>$23,789</td>
-
-                                            </tr>
-                                            <tr>
-                                                <td>3</td>
-                                                <td>Sage Rodriguez</td>
-                                                <td>$56,142</td>
-
-                                            </tr>
-                                            <tr>
-                                                <td>4</td>
-                                                <td>Philip Chaney</td>
-                                                <td>$38,735</td>
-
-                                            </tr>
+                                            @foreach (BankAccountModel account in Model.BankAccountsModel.BankAccounts)
+                                            {
+                                                <tr>
+                                                    <td>@account.No</td>
+                                                    <td>@account.Balance</td>
+                                                    <td>@account.CreatedDate</td>
+                                                </tr>
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
@@ -198,5 +182,18 @@
 </html>
 
 <script>
-    //write ajax 
+    $('#btnHesapOlustur').click(function () {
+
+        alert("scripte girdi");
+        $.ajax({
+            url: '/BankAccount/Open',
+            type: "POST",
+            success: function () {
+                document.location = '/Account/Index';
+            },
+            error: function () {
+                alert("hesap oluşturulamadı.");
+            }
+        });
+    });
 </script>

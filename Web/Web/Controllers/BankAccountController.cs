@@ -14,38 +14,6 @@ namespace Web.Controllers
 {
     public class BankAccountController : Controller
     {
- 
-        public IActionResult List()
-        {
-            HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
-
-            HttpResponseMessage response = httpClient.GetAsync("api/BankAccount").Result;
-
-            string responseBody = response.Content.ReadAsStringAsync().Result;
-
-            JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
-
-
-            if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
-            {
-                BankAccountsModel bankAccounts = JsonConvert.DeserializeObject<BankAccountsModel>(responseBody);                
-
-                return View(bankAccounts);
-            }
-
-            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 200))
-            {
-                //hata döndür
-            }
-    
-            else
-            {
-                // hata döndür
-            }
-            return View();
-        }
 
         [HttpPost]
         public IActionResult Open()

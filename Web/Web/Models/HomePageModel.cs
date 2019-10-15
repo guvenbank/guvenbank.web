@@ -11,6 +11,8 @@ namespace Web.Models
 
         public UserModel UserModel { get; set; }
 
+        public BankAccountsModel BankAccountsModel { get; set; }
+
         //bankaccount
     }
 }

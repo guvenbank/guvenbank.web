@@ -30,6 +30,13 @@ namespace Web.Controllers
             TransactionsModel transactionsModel = JsonConvert.DeserializeObject<TransactionsModel>(responseBody);
             UserModel userModel = new UserModel();
 
+            response = httpClient.GetAsync("api/BankAccount").Result;
+
+            responseBody = response.Content.ReadAsStringAsync().Result;
+
+            responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
+            BankAccountsModel bankAccounts = JsonConvert.DeserializeObject<BankAccountsModel>(responseBody);
+
             HomePageModel homePageModel = new HomePageModel();
 
             userModel.Token = HttpContext.Session.GetString("token");
@@ -41,6 +48,7 @@ namespace Web.Controllers
 
             homePageModel.TransactionsModel = transactionsModel;
             homePageModel.UserModel = userModel;
+            homePageModel.BankAccountsModel = bankAccounts;
 
             return View(homePageModel);
         }
