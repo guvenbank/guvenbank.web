@@ -33,6 +33,10 @@
     {
       "library": "tilt.js@1.2.1",
       "destination": "wwwroot/lib/tilt"
+    },
+    {
+      "library": "bootstrap-material-design@4.0.2",
+      "destination": "wwwroot/lib/bootstrap-material-design"
     }
   ]
 }
