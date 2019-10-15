@@ -72,7 +72,7 @@ namespace Web.Controllers
         {
 
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("http://192.168.1.34:5002/api/auth/register");
+            httpClient.BaseAddress = new Uri("http://207.154.196.92:5002");
 
             string jsonData = JsonConvert.SerializeObject(registerModel);
 

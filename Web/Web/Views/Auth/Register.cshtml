@@ -1,7 +1,84 @@
-﻿
+﻿@model RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Kayıt Ol";
 }
 
-<h1>Register</h1>
+<div class="limiter">
+    <div class="container-login100" style="margin-top: -5%">
+        <div class="wrap-login100">
+            <div class="login100-pic js-tilt" data-tilt>
+                <img src="/images/img-01.png" alt="IMG">
+            </div>
 
+            <form asp-controller="Account" asp-action="Register" method="post" role="form" class="login100-form validate-form" style="margin-top: -10%">
+                <span class="login100-form-title">
+                    KAYIT OL!
+                </span>
+
+                <div class="wrap-input100 validate-input">
+                    <input class="input100" maxlength="11" onkeypress="return isNumberKey(event)" type="text" asp-for="TC" placeholder="TC Kimlik Numaranız">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-users" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <div class="wrap-input100 validate-input">
+                    <input class="input100" onkeypress="return isLetter(event)" maxlength="20" type="text" asp-for="FirstName" placeholder="Adınız">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <div class="wrap-input100 validate-input">
+                    <input class="input100" onkeypress="return isLetter(event)" maxlength="20" type="text" asp-for="LastName" placeholder="Soyadınız">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <div class="wrap-input100 validate-input">
+                    <input class="input100" maxlength="11" onkeypress="return isNumberKey(event)" type="text" asp-for="PhoneNumber" placeholder="Telefon Numaranız">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-phone" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="Password is required">
+                    <input class="input100" type="password" asp-for="Password" placeholder="Şifreniz">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <button type="submit" class="login100-form-btn"> Kayıt Ol </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    }
+
+    function isLetter(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode <= 93 && charCode >= 65) || (charCode <= 122 && charCode >= 97) || (charCode == 8)) {
+            return true;
+        }
+        return false;
+    };
+
+</script>
