@@ -54,9 +54,10 @@ namespace Web.Controllers
 
             }
 
-            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 200))
+            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 400))
             {
-                return RedirectToAction("Login", "Auth");
+                ViewBag.error = true;
+                return View();
                 //databag ile şifre yada tc yanlış hatası döndür.
             }
 
@@ -83,7 +84,6 @@ namespace Web.Controllers
 
             JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
-
             if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
             {
                 HttpContext.Session.SetString("token", responseJson["token"].ToString());
@@ -94,13 +94,13 @@ namespace Web.Controllers
                 HttpContext.Session.SetString("no", responseJson["no"].ToString());
                 return RedirectToAction("Index", "Account");
             }
-
-            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 200))
+            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 400))
             {
-                return RedirectToAction("Register", "Auth");
                 //databag ile hatayı döndür register sayfasına ve sayfada göster
-            }
+                ViewBag.error = true;
 
+                return View();
+            }
             else
             {
                 // register ekranına dön hata oluştu yazısı yazdır.

@@ -36,6 +36,11 @@
                     <form asp-controller="Account" asp-action="Login" method="post" role="form" class="login100-form validate-form" style="margin-top: -6%">
                         <span class="login100-form-title"> KULLANICI GİRİŞİ </span>
 
+                        @if (ViewBag.error == true)
+                        {
+                            <div class="alert alert-danger" role="alert"> Kullanıcı adı veya şifre hatalı. </div>
+                        }
+
                         <div class="wrap-input100 validate-input">
                             <input type="text" id="btnTcNo" class="form-control input100" maxlength="11" onkeypress="return isNumberKey(event)" placeholder="TC Kimlik Numaranız" asp-for="TC">
                             <span class="focus-input100"></span>

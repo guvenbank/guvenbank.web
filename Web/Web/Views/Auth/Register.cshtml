@@ -40,6 +40,11 @@
                             KAYIT OL!
                         </span>
 
+                        @if (ViewBag.error == true)
+                        {
+                            <div class="alert alert-danger" role="alert"> Lütfen girilen bilgileri kontrol edin. </div>
+                        }
+
                         <div class="wrap-input100 validate-input">
                             <input class="input100" maxlength="11" onkeypress="return isNumberKey(event)" type="text" asp-for="TC" placeholder="TC Kimlik Numaranız">
                             <span class="focus-input100"></span>
