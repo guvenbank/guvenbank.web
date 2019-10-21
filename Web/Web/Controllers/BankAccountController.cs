@@ -117,7 +117,78 @@ namespace Web.Controllers
         }
 
 
+        [HttpPost]
+        public IActionResult Deposit(string No, string Amount)
+        {
+            DepositModel depositModel = new DepositModel();
+            depositModel.No = Convert.ToInt32(No);
+            depositModel.Amount = Convert.ToDecimal(Amount);
+
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+
+            string jsonData = JsonConvert.SerializeObject(depositModel);
+
+            var content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = httpClient.PostAsync("/api/BankAccount/deposit", content).Result;
+
+            string responseBody = response.Content.ReadAsStringAsync().Result;
+
+            JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
 
+            if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
+            {
+                return Ok();
+            }
+
+            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 200))
+            {
+                return BadRequest();
+            }
+
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+
+        [HttpDelete]
+        public IActionResult Delete(string No)
+        {
+            //DeleteModel deleteModel = new DeleteModel();
+            //deleteModel.No =Convert.ToInt32(No);
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+
+            //string jsonData = JsonConvert.SerializeObject(deleteModel);
+
+           // var content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = httpClient.DeleteAsync("/api/BankAccount/" + No).Result;
+
+            string responseBody = response.Content.ReadAsStringAsync().Result;
+
+            JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
+
+
+            if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
+            {
+                return Ok();
+            }
+
+            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 200))
+            {
+                ViewBag.ErrorMessage = responseJson["message"].ToString();
+                return BadRequest();
+            }
+
+            else
+            {
+                return BadRequest();
+            }
+        }
     }
 }

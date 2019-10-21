@@ -104,13 +104,15 @@
                                     <h4 class="card-title">VARLIKLARIM</h4>
 
                                 </div>
+
                                 <button type="button" class="btn btn-primary ml-5 mr-5 mt-3 mt-3" id="btnHesapOlustur"> YENI HESAP OLUSTUR </button>
                                 <div class="card-body table-responsive">
                                     <table class="table table-hover">
                                         <thead class="text-warning">
                                         <th>ID</th>
                                         <th>BAKIYE</th>
-                                        <th>OLUŞTURULMA TARIHI</th>
+                                        <th>PARA YATIRMA</th>
+                                        <th>HESAP ISLEMI</th>
                                         </thead>
 
                                         <tbody>
@@ -119,11 +121,56 @@
                                                 <tr>
                                                     <td>@account.No</td>
                                                     <td>@account.Balance</td>
-                                                    <td>@account.CreatedDate</td>
+                                                    <td><button type="button" class="btn btn-primary btnBakiyeArttir" data-toggle="modal" data-target="#popupBakiye" value="@account.No">PARA YATIRMA</button> </td>
+                                                    <td><button type="button" class="btn btn-primary btnHesapKapat" data-toggle="modal" data-target="#popupHesapSil" value="@account.No">HESABI KAPAT</button> </td>
                                                 </tr>
                                             }
                                         </tbody>
                                     </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Popup Para Yatır -->
+                        <div class="modal fade" id="popupBakiye" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">HESABA PARA YATIRMA</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="popupVal" />
+                                        <input type="text" id="popupBalance" onkeypress="return isNumberKey(event)" /> ₺
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İPTAL</button>
+                                        <button type="button" class="btn btn-primary" id="btnOkParaYatir">PARA YATIR</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Popup Hesap Sil -->
+                        <div class="modal fade" id="popupHesapSil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">HESABI SİLME</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label>Hesabınız kalıcı olarak silinecektir. Kalıcı olarak silmek istiyor musunuz ? </label>
+                                        <input type="hidden" id="popupHesapSilVal" />
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İPTAL</button>
+                                        <button type="button" class="btn btn-primary" id="btnOkHesapSil">EVET</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -137,33 +184,36 @@
                                 <div class="card-body table-responsive">
                                     <table class="table table-hover">
                                         <thead class="text-warning">
-
+                                        <th>GELEN HESAP NO</th>
                                         <th>GIDEN / GELEN</th>
                                         <th>TARIH</th>
                                         <th>TUTAR</th>
+                                        <th>AÇIKLAMA</th>
                                         </thead>
 
                                         <tbody>
-                                            <tr>
-                                                <td>GIDEN</td>
-                                                <td>Dakota Rice</td>
-                                                <td>$36,738</td>
-                                            </tr>
-                                            <tr>
-                                                <td>GELEN</td>
-                                                <td>Minerva Hooper</td>
-                                                <td>$23,789</td>
-                                            </tr>
-                                            <tr>
-                                                <td>GELEN</td>
-                                                <td>Sage Rodriguez</td>
-                                                <td>$56,142</td>
-                                            </tr>
-                                            <tr>
-                                                <td>GIDEN</td>
-                                                <td>Philip Chaney</td>
-                                                <td>$38,735</td>
-                                            </tr>
+                                            @foreach (TransactionModel transaction in Model.TransactionsModel.transactions)
+                                            {
+
+                                                <tr>
+                                                    <td>@transaction.receiverBankAccountNo</td>
+                                                    @if (transaction.receiverFullName == Model.UserModel.FullName)
+                                                    {
+                                                        <td>
+                                                            GELEN
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            GİDEN
+                                                        </td>
+                                                    }
+                                                    <td>@transaction.date</td>
+                                                    <td>@transaction.amount ₺</td>
+                                                    <td>@transaction.summary</td>
+                                                </tr>
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
@@ -184,7 +234,6 @@
 <script>
     $('#btnHesapOlustur').click(function () {
 
-        alert("scripte girdi");
         $.ajax({
             url: '/BankAccount/Open',
             type: "POST",
@@ -196,4 +245,66 @@
             }
         });
     });
+
+    $('.btnBakiyeArttir').click(function () {
+
+        var btnVal = $(this).val();
+        $('#popupVal').val(btnVal);  
+    });
+
+     $('#btnOkParaYatir').click(function () {
+
+          var myData = {
+                No: $('#popupVal').val(),
+                Amount: $('#popupBalance').val()
+            }
+
+        $.ajax({
+            url: '/BankAccount/Deposit',
+            type: 'POST',
+            data: myData,
+            success: function () {
+                document.location = '/Account/Index';
+            },
+            error: function () {
+                alert("Para Yatırılamadı.");
+            }
+        });
+    });
+
+    $('.btnHesapKapat').click(function () {
+
+        var btnVal = $(this).val();
+        $('#popupHesapSilVal').val(btnVal);  
+    });
+
+    $('#btnOkHesapSil').click(function () {
+
+          var myData = {
+                No: $('#popupHesapSilVal').val()
+            }
+
+        $.ajax({
+            url: '/BankAccount/Delete',
+            type: 'DELETE',
+            data: myData,
+            success: function () {
+                document.location = '/Account/Index';
+            },
+            error: function () {
+
+                var message = @ViewBag.ErrorMessage
+                    alert(message);
+            }
+        });
+    });
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+       
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
 </script>
