@@ -1,8 +1,72 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Kayıt Ol";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GUVENBANK</title>
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/font-awesome/css/fontawesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/animate/animate.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/hamburgers/hamburgers.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/site.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/util.css" rel="stylesheet" type="text/css" />
+
+    <script src="~/lib/modernizr/modernizr.js"></script>
+</head>
+<body>
+
+    <div class="container body-content">
+        <div class="limiter">
+            <div class="container-login100" style="margin-top: -5%">
+
+                <div class="wrap-login100">
+                    <div class="login100-pic js-tilt" data-tilt style="margin-top: -10%">
+                        <img src="/images/img-01.png" alt="IMG">
+                    </div>
+
+                    <div class="login100-form validate-form" style="margin-top: -10%">
+                        <span class="wrap-input100 login100-form-title">
+                            GÜVENBANK
+                        </span>
+
+                        <div class="wrap-input100 container-login100-form-btn">
+                            <a href="/Auth/Login" class="login100-form-btn"> Giriş Yap </a>
+                        </div>
+
+                        <div class="wrap-input100 container-login100-form-btn">
+                            <a href="/Auth/Register" class="login100-form-btn"> Kayıt Ol </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <hr />
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/select2/js/select2.min.js"></script>
+    <script src="~/lib/tilt/tilt.jquery.min.js"></script>
+    <script src="~/js/site.js"></script>
+
+    <script>
+        $('.js-tilt').tilt({
+            scale: 1.1
+        })
+    </script>
+
+</body>
+</html>
