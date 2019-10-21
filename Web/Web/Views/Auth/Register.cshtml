@@ -108,13 +108,14 @@
 
         function isLetter(evt) {
             var charCode = (evt.which) ? evt.which : event.keyCode
-            if ((charCode <= 93 && charCode >= 65) || (charCode <= 122 && charCode >= 97) || (charCode == 8)) {
+            if ((charCode <= 93 && charCode >= 65) || (charCode <= 122 && charCode >= 97) || (charCode == 8) || (charCode == 199) || (charCode == 231) || (charCode == 286) || (charCode == 287) || (charCode == 304) || (charCode == 305) || (charCode == 214) || (charCode == 246) || (charCode == 350) || (charCode == 351) || (charCode == 220) || (charCode == 252)) {
                 return true;
             }
             return false;
         };
 
     </script>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="~/lib/select2/js/select2.min.js"></script>
