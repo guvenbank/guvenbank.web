@@ -32,14 +32,14 @@ namespace Web.Controllers
 
             if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
             {
-                ViewBag.Error = responseJson["message"].ToString();
+                return BadRequest(new { status = "failed", message = responseJson["message"].ToString() });
             }
-            else
+            else if ((Convert.ToInt32(response.StatusCode) != 200))
             {
-                ViewBag.ErrorMessage = "Bir hata oluştu.";
+                return BadRequest(new { status = "failed", message = "Bir hata oluştu." });
             }
 
-            return View();
+            return Ok();
         }
 
 
@@ -134,14 +134,14 @@ namespace Web.Controllers
 
             if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
             {
-                ViewBag.Error = responseJson["message"].ToString();
+                return BadRequest(new { status = "failed", message = responseJson["message"].ToString() });
             }
-            else
+            else if ((Convert.ToInt32(response.StatusCode) != 200))
             {
-                ViewBag.ErrorMessage = "Bir hata oluştu.";
+                return BadRequest(new { status = "failed", message = "Bir hata oluştu." });
             }
 
-            return View();
+            return Ok();
         }
 
 
@@ -165,14 +165,14 @@ namespace Web.Controllers
 
             if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
             {
-                ViewBag.Error = responseJson["message"].ToString();
+                return BadRequest(new { status = "failed", message = responseJson["message"].ToString() });
             }
-            else
+            else if((Convert.ToInt32(response.StatusCode) != 200))
             {
-                ViewBag.ErrorMessage = "Bir hata oluştu.";
+                return BadRequest(new { status = "failed", message = "Bir hata oluştu." });
             }
 
-            return View();
+            return Ok();
         }
     }
 }

@@ -96,10 +96,7 @@
             <div class="content">
                 <div class="container-fluid">
 
-                    @if (!string.IsNullOrEmpty(ViewBag.Error))
-                    {
-                        <div class="alert alert-danger" role="alert"> @ViewBag.Error </div>
-                    }
+                    <div class="alert" role="alert" id="message" style="visibility: hidden;">  </div>
 
                     <div class="row">
                         <div class="col-lg-6 col-md-12">
@@ -171,7 +168,7 @@
                                         <input type="hidden" id="popupHesapSilVal" />
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İPTAL</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal">İPTAL</button>
                                         <button type="button" class="btn btn-primary" id="btnOkHesapSil">EVET</button>
                                     </div>
                                 </div>
@@ -241,10 +238,31 @@
             url: '/BankAccount/Open',
             type: "POST",
             success: function () {
-                document.location = '/Account/Index';
+                document.location.reload();  
+                $( document ).ready(function() {
+                //$('#message').text("Hesap başarıyla oluşturuldu.");
+                //$('#message').addClass("alert-success");
+                //$('#message').css("visibility", "visible");       
+                //$('#message').fadeOut(6000);
+                });
             },
-            error: function () {
-                alert("hesap oluşturulamadı.");
+            error: function (res) {
+
+                if (res.responseJSON.status == "failed")
+                {
+                    $('#message').text(res.responseJSON.message);
+                    $('#message').css("visibility", "visible");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(6000);
+                }
+                else {
+                    $('#message').text("Bir sorun oluştu.");
+                    $('#message').css("visibility", "visible");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(6000);
+                }
             }
         });
     });
@@ -267,10 +285,33 @@
             type: 'POST',
             data: myData,
             success: function () {
-                document.location = '/Account/Index';
+                //$('#closeModal').click();
+                 document.location.reload();
+                //$( document ).ready(function() {
+                //$('#message').text("Hesap başarıyla oluşturuldu.");
+                //$('#message').css("visibility", "visible");
+                //$('#message').addClass("alert-success");
+                
+                //$('#message').fadeOut(6000);
+                //});
             },
-            error: function () {
-                alert("Para Yatırılamadı.");
+           error: function (res) {
+
+                if (res.responseJSON.status == "failed")
+                {
+                    $('#message').text(res.responseJSON.message);
+                    $('#message').css("visibility", "visible");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(6000);
+                }
+                else {
+                    $('#message').text("Bir sorun oluştu.");
+                    $('#message').css("visibility", "visible");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(6000);
+                }
             }
         });
     });
@@ -290,7 +331,37 @@
         $.ajax({
             url: '/BankAccount/Delete',
             type: 'DELETE',
-            data: myData
+            data: myData,
+            success: function () {
+                $('#closeModal').click();
+                document.location.reload();
+                //$( document ).ready(function() {
+                //$('#message').text("Hesap başarıyla silindi.");
+                //$('#message').css("visibility", "visible");
+                //$('#message').addClass("alert-success");
+                
+                //$('#message').fadeOut(6000);
+                //});
+
+            },
+            error: function (res) {
+
+                if (res.responseJSON.status == "failed")
+                {
+                    $('#message').text(res.responseJSON.message);
+                    $('#message').css("visibility", "visible");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(6000);
+                }
+                else {
+                    $('#message').text("Bir sorun oluştu.");
+                    $('#message').css("visibility", "visible");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(6000);
+                }
+            }
         });
     });
 
