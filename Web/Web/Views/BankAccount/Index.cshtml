@@ -1,0 +1,292 @@
+﻿@model HomePageModel
+@{
+    ViewData["Title"] = "Banka Hesaplarım";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GUVENBANK</title>
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/font-awesome/css/fontawesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/material-dashboard.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+    <div class="wrapper ">
+        <div class="sidebar" data-color="purple" data-background-color="white" data-image="~/images/sidebar-1.jpg">
+            <div class="logo">
+                <a href="#" class="simple-text logo-normal">
+                    GÜVENBANK
+                </a>
+            </div>
+            <div class="sidebar-wrapper">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="material-icons">dashboard</i>
+                            <p>ANASAYFA</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/Account">
+                            <i class="material-icons">person</i>
+                            <p>BİLGİLERİM</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/Transaction">
+                            <i class="material-icons">content_paste</i>
+                            <p>TRANSFERLER</p>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/BankAccount">
+                            <i class="material-icons">library_books</i>
+                            <p>BANKA HESAPLARIM</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Auth/Logout">
+                            <i class="material-icons">logout</i>
+                            <p>ÇIKIŞ YAP</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+                <div class="container-fluid">
+                    <div class="navbar-wrapper">HOŞ GELDİNİZ, @Model.UserModel.FullName</div>
+                    <div class="navbar-wrapper">Müşteri No: @Model.UserModel.CustomerNo</div>
+                </div>
+            </nav>
+            <!-- End Navbar -->
+            <div class="content">
+                <div class="container-fluid">
+
+                    <div class="alert" role="alert" id="message" style="display: none;">  </div>
+
+                    <div class="row">
+
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-8 col-md-12">
+                            <div class="card">
+                                <div class="card-header card-header-warning">
+                                    <h4 class="card-title">BANKA HESAPLARIM</h4>
+                                </div>
+
+                                <button type="button" class="btn btn-primary ml-5 mr-5 mt-3 mt-3" id="btnHesapOlustur"> YENI HESAP OLUSTUR </button>
+                                <div class="card-body table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="text-warning">
+                                        <th>IBAN</th>
+                                        <th>BAKIYE</th>
+                                        <th>OLUŞTURULMA TARİHİ</th>
+                                        <th>PARA YATIRMA</th>
+                                        <th>HESAP ISLEMI</th>
+                                        </thead>
+
+                                        <tbody>
+                                            @foreach (BankAccountModel bankAccount in Model.BankAccountsModel.BankAccounts)
+                                            {
+                                                <tr>
+                                                    <td>@Model.UserModel.CustomerNo-@bankAccount.No</td>
+                                                    <td>@bankAccount.Balance ₺</td>
+                                                    <td>@bankAccount.CreatedDate</td>
+                                                    <td><button type="button" class="btn btn-primary btnBakiyeArttir" data-toggle="modal" data-target="#popupBakiye" value="@bankAccount.No">PARA YATIRMA</button> </td>
+                                                    <td><button type="button" class="btn btn-primary btnHesapKapat" data-toggle="modal" data-target="#popupHesapSil" value="@bankAccount.No">HESABI KAPAT</button> </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2"></div>
+
+                        <!-- Popup Para Yatır -->
+                        <div class="modal fade" id="popupBakiye" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">HESABA PARA YATIRMA</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="popupVal" />
+                                        <label for="popupBalance">Yüklenecek Tutar: </label>
+                                        <input type="text" id="popupBalance" onkeypress="return isNumberKey(event)" /> ₺
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İPTAL</button>
+                                        <button type="button" class="btn btn-primary" id="btnOkParaYatir">PARA YATIR</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Popup Hesap Sil -->
+                        <div class="modal fade" id="popupHesapSil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">HESABI SİLME</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label>Hesabınız kalıcı olarak silinecektir. Kalıcı olarak silmek istiyor musunuz ? </label>
+                                        <input type="hidden" id="popupHesapSilVal" />
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal">İPTAL</button>
+                                        <button type="button" class="btn btn-primary" id="btnOkHesapSil">EVET</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/js/material-dashboard.js"></script>
+</body>
+</html>
+
+<script>
+    $('#btnHesapOlustur').click(function () {
+
+        $.ajax({
+            url: '/BankAccount/Open',
+            type: "POST",
+            success: function () {
+                document.location.reload();
+            },
+            error: function (res) {
+
+                if (res.responseJSON.status == "failed")
+                {
+                    $('#message').text(res.responseJSON.message);
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(3000, function () { this.css("display", "none"); });
+                }
+                else {
+                    $('#message').text("Bir sorun oluştu.");
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(3000, function () { this.css("display", "none"); });
+                }
+            }
+        });
+    });
+
+    $('.btnBakiyeArttir').click(function () {
+
+        var btnVal = $(this).val();
+        $('#popupVal').val(btnVal);
+    });
+
+     $('#btnOkParaYatir').click(function () {
+
+          var myData = {
+                No: $('#popupVal').val(),
+                Amount: $('#popupBalance').val()
+            }
+
+        $.ajax({
+            url: '/BankAccount/Deposit',
+            type: 'POST',
+            data: myData,
+            success: function () {
+                 document.location.reload();
+
+            },
+           error: function (res) {
+
+                if (res.responseJSON.status == "failed")
+                {
+                    $('#message').text(res.responseJSON.message);
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(3000, function () { this.css("display", "none"); });
+                }
+                else {
+                    $('#message').text("Bir sorun oluştu.");
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(3000, function () { this.css("display", "none"); });
+                }
+            }
+        });
+    });
+
+    $('.btnHesapKapat').click(function () {
+
+        var btnVal = $(this).val();
+        $('#popupHesapSilVal').val(btnVal);
+    });
+
+    $('#btnOkHesapSil').click(function () {
+
+          var myData = {
+                No: $('#popupHesapSilVal').val()
+            }
+
+        $.ajax({
+            url: '/BankAccount/Delete',
+            type: 'DELETE',
+            data: myData,
+            success: function () {
+                $('#closeModal').click();
+                document.location.reload();
+            },
+            error: function (res) {
+
+                if (res.responseJSON.status == "failed")
+                {
+                    $('#message').text(res.responseJSON.message);
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(3000, function () { this.css("display", "none"); });
+                }
+                else {
+                    $('#message').text("Bir sorun oluştu.");
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#closeModal').click();
+                    $('#message').fadeOut(3000, function () { this.css("display", "none"); });
+                }
+            }
+        });
+    });
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+</script>

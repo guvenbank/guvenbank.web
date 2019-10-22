@@ -46,6 +46,9 @@ namespace Web.Controllers
             userModel.PhoneNumber = HttpContext.Session.GetString("phoneNumber");
             userModel.CustomerNo = Convert.ToInt32(HttpContext.Session.GetString("no"));
 
+            transactionsModel.transactions = transactionsModel.transactions.OrderBy(x => x.date).ToList();
+            bankAccounts.BankAccounts = bankAccounts.BankAccounts.OrderBy(x => x.No).ToList();
+
             homePageModel.TransactionsModel = transactionsModel;
             homePageModel.UserModel = userModel;
             homePageModel.BankAccountsModel = bankAccounts;

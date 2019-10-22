@@ -14,7 +14,6 @@ namespace Web.Controllers
 {
     public class AuthController : Controller
     {
-
         public IActionResult Login()
         {
             return View();
@@ -41,7 +40,6 @@ namespace Web.Controllers
 
             JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
-
             if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "success"))
             {
                 HttpContext.Session.SetString("token", responseJson["token"].ToString());
@@ -50,7 +48,8 @@ namespace Web.Controllers
                 HttpContext.Session.SetString("lastName", responseJson["lastName"].ToString());
                 HttpContext.Session.SetString("phoneNumber", responseJson["phoneNumber"].ToString());
                 HttpContext.Session.SetString("no", responseJson["no"].ToString());
-                return RedirectToAction("Index", "Account");
+                
+                return RedirectToAction("Index", "Home");
             }
             else if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
             {
@@ -102,5 +101,10 @@ namespace Web.Controllers
             return View();
         }
 
+        public IActionResult Logout()
+        {
+            HttpContext.Session.SetString("token", "");
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

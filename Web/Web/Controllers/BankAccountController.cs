@@ -14,6 +14,46 @@ namespace Web.Controllers
 {
     public class BankAccountController : Controller
     {
+        public IActionResult Index()
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+
+            HttpResponseMessage response = httpClient.GetAsync("api/transaction").Result;
+
+            string responseBody = response.Content.ReadAsStringAsync().Result;
+
+            JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
+
+            TransactionsModel transactionsModel = JsonConvert.DeserializeObject<TransactionsModel>(responseBody);
+            UserModel userModel = new UserModel();
+
+            response = httpClient.GetAsync("api/BankAccount").Result;
+
+            responseBody = response.Content.ReadAsStringAsync().Result;
+
+            responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
+            BankAccountsModel bankAccounts = JsonConvert.DeserializeObject<BankAccountsModel>(responseBody);
+
+            HomePageModel homePageModel = new HomePageModel();
+
+            userModel.Token = HttpContext.Session.GetString("token");
+            userModel.TC = HttpContext.Session.GetString("tc");
+            userModel.FirstName = HttpContext.Session.GetString("firstName");
+            userModel.LastName = HttpContext.Session.GetString("lastName");
+            userModel.PhoneNumber = HttpContext.Session.GetString("phoneNumber");
+            userModel.CustomerNo = Convert.ToInt32(HttpContext.Session.GetString("no"));
+
+            transactionsModel.transactions = transactionsModel.transactions.OrderBy(x => x.date).ToList();
+            bankAccounts.BankAccounts = bankAccounts.BankAccounts.OrderBy(x => x.No).ToList();
+
+            homePageModel.TransactionsModel = transactionsModel;
+            homePageModel.UserModel = userModel;
+            homePageModel.BankAccountsModel = bankAccounts;
+
+            return View(homePageModel);
+        }
 
         [HttpPost]
         public IActionResult Open()
@@ -79,15 +119,10 @@ namespace Web.Controllers
         [HttpDelete]
         public IActionResult Delete(string No)
         {
-            //DeleteModel deleteModel = new DeleteModel();
-            //deleteModel.No =Convert.ToInt32(No);
             HttpClient httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
 
-            //string jsonData = JsonConvert.SerializeObject(deleteModel);
-
-           // var content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
             HttpResponseMessage response = httpClient.DeleteAsync("/api/BankAccount/" + No).Result;
 
             string responseBody = response.Content.ReadAsStringAsync().Result;

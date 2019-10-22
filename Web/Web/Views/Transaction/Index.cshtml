@@ -1,6 +1,6 @@
 ﻿@model HomePageModel
 @{
-    ViewData["Title"] = "İşlemler";
+    ViewData["Title"] = "Transferler";
 }
 <!DOCTYPE html>
 <html>
@@ -26,13 +26,13 @@
             <div class="sidebar-wrapper">
                 <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="./dashboard.html">
+                        <a class="nav-link" href="/">
                             <i class="material-icons">dashboard</i>
                             <p>ANASAYFA</p>
                         </a>
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link" href="./user.html">
+                        <a class="nav-link" href="/Account">
                             <i class="material-icons">person</i>
                             <p>BİLGİLERİM</p>
                         </a>
@@ -49,6 +49,12 @@
                             <p>BANKA HESAPLARIM</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Auth/Logout">
+                            <i class="material-icons">logout</i>
+                            <p>ÇIKIŞ YAP</p>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -57,12 +63,7 @@
             <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
                 <div class="container-fluid">
                     <div class="navbar-wrapper">HOŞ GELDİNİZ, @Model.UserModel.FullName</div>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="navbar-toggler-icon icon-bar"></span>
-                        <span class="navbar-toggler-icon icon-bar"></span>
-                        <span class="navbar-toggler-icon icon-bar"></span>
-                    </button>
+                    <div class="navbar-wrapper">Müşteri No: @Model.UserModel.CustomerNo</div>
                 </div>
             </nav>
             <!-- End Navbar -->
@@ -114,7 +115,7 @@
                                         <select class="form-control" id="inputReceiver">
                                             @foreach (BankAccountModel bankAccountModel in Model.BankAccountsModel.BankAccounts)
                                             {
-                                                <option value="@bankAccountModel.No">@bankAccountModel.No-@bankAccountModel.Balance ₺</option>
+                                                <option value="@bankAccountModel.No">@bankAccountModel.No - @bankAccountModel.Balance ₺</option>
                                             }
                                         </select>
                                         <input type="hidden" id="inputSelectedReceiver" />
@@ -122,7 +123,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="inputAmount">Miktar</label>
+                                        <label for="inputAmount">Tutar</label>
                                         <input type="text" class="form-control" id="inputAmount" placeholder="500" onkeypress="return isNumberKey(event)">
                                     </div>
 
@@ -150,10 +151,10 @@
                                         <th>GÖNDEREN IBAN</th>
                                         <th>ALICI IBAN</th>
                                         <th>TİP</th>
-                                        <th>TARIH</th>
+                                        <th>TARİH</th>
                                         <th>TUTAR</th>
                                         <th>AÇIKLAMA</th>
-                                        </thead>
+                                        <thead />
 
                                         <tbody>
                                             @foreach (TransactionModel transaction in Model.TransactionsModel.transactions)
@@ -182,50 +183,6 @@
                                             }
                                         </tbody>
                                     </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Popup Para Yatır -->
-                        <div class="modal fade" id="popupBakiye" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">HESABA PARA YATIRMA</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <input type="hidden" id="popupVal" />
-                                        <input type="text" id="popupBalance" onkeypress="return isNumberKey(event)" /> ₺
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İPTAL</button>
-                                        <button type="button" class="btn btn-primary" id="btnOkParaYatir">PARA YATIR</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Popup Hesap Sil -->
-                        <div class="modal fade" id="popupHesapSil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">HESABI SİLME</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <label>Hesabınız kalıcı olarak silinecektir. Kalıcı olarak silmek istiyor musunuz ? </label>
-                                        <input type="hidden" id="popupHesapSilVal" />
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İPTAL</button>
-                                        <button type="button" class="btn btn-primary" id="btnOkHesapSil">EVET</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -310,14 +267,14 @@
                         $('#message').css("visibility", "visible");
                         $('#message').addClass("alert-danger");
                         $('#closeModal').click();
-                        $('#message').fadeOut(6000);
+                        $('#message').fadeOut(3000, function () { this.css("display", "none"); });
                     }
                     else {
                         $('#message').text("Bir sorun oluştu.");
                         $('#message').css("visibility", "visible");
                         $('#message').addClass("alert-danger");
                         $('#closeModal').click();
-                        $('#message').fadeOut(6000);
+                        $('#message').fadeOut(3000, function () { this.css("display", "none"); });
                     }
                 }
             });

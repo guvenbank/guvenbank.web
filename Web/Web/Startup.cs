@@ -33,7 +33,10 @@ namespace Web
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDistributedMemoryCache();
-            services.AddSession();
+            services.AddSession(opts =>
+            {
+                opts.Cookie.IsEssential = true; // make the session cookie Essential
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

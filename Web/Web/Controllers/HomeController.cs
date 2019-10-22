@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Web.Models;
 
 namespace Web.Controllers
@@ -16,28 +17,49 @@ namespace Web.Controllers
     {
         public IActionResult Index()
         {
-            //HttpClient httpClient = new HttpClient();
-            //httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");    
-            //httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjU0ODYyMzU1OTUyIiwibmJmIjoxNTcwODg3Njk3LCJleHAiOjE1NzA4ODc3NTcsImlhdCI6MTU3MDg4NzY5N30.7FAegeFDZPLowt_IZfdSB3wyBfbv3TOMk8gF73zls_s");
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("token")))
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
 
-            //HttpResponseMessage response = httpClient.GetAsync("api/transaction").Result;
+                HttpResponseMessage response = httpClient.GetAsync("api/transaction").Result;
 
-            //string responseBody = response.Content.ReadAsStringAsync().Result;
+                string responseBody = response.Content.ReadAsStringAsync().Result;
 
-            //TransactionsModel model = JsonConvert.DeserializeObject<TransactionsModel>(responseBody);
+                JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
-            return View(/*model*/);
-        }
+                TransactionsModel transactionsModel = JsonConvert.DeserializeObject<TransactionsModel>(responseBody);
+                UserModel userModel = new UserModel();
 
-        public IActionResult Privacy()
-        {
+                response = httpClient.GetAsync("api/BankAccount").Result;
+
+                responseBody = response.Content.ReadAsStringAsync().Result;
+
+                responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
+                BankAccountsModel bankAccounts = JsonConvert.DeserializeObject<BankAccountsModel>(responseBody);
+
+                HomePageModel homePageModel = new HomePageModel();
+
+                userModel.Token = HttpContext.Session.GetString("token");
+                userModel.TC = HttpContext.Session.GetString("tc");
+                userModel.FirstName = HttpContext.Session.GetString("firstName");
+                userModel.LastName = HttpContext.Session.GetString("lastName");
+                userModel.PhoneNumber = HttpContext.Session.GetString("phoneNumber");
+                userModel.CustomerNo = Convert.ToInt32(HttpContext.Session.GetString("no"));
+
+                transactionsModel.transactions = transactionsModel.transactions.OrderBy(x => x.date).ToList();
+                bankAccounts.BankAccounts = bankAccounts.BankAccounts.OrderBy(x => x.No).ToList();
+
+                homePageModel.TransactionsModel = transactionsModel;
+                homePageModel.UserModel = userModel;
+                homePageModel.BankAccountsModel = bankAccounts;
+
+                return View("dashboard", homePageModel);
+            }
+
+            HttpContext.Session.Clear();
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

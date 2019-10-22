@@ -1,0 +1,163 @@
+﻿@model HomePageModel
+@{
+    ViewData["Title"] = "Anasayfa";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GUVENBANK</title>
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/font-awesome/css/fontawesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/material-dashboard.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+    <div class="wrapper ">
+        <div class="sidebar" data-color="purple" data-background-color="white" data-image="~/images/sidebar-1.jpg">
+            <div class="logo">
+                <a href="#" class="simple-text logo-normal">
+                    GÜVENBANK
+                </a>
+            </div>
+            <div class="sidebar-wrapper">
+                <ul class="nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">
+                            <i class="material-icons">dashboard</i>
+                            <p>ANASAYFA</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/Account">
+                            <i class="material-icons">person</i>
+                            <p>BİLGİLERİM</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Transaction">
+                            <i class="material-icons">content_paste</i>
+                            <p>TRANSFERLER</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/BankAccount">
+                            <i class="material-icons">library_books</i>
+                            <p>BANKA HESAPLARIM</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Auth/Logout">
+                            <i class="material-icons">logout</i>
+                            <p>ÇIKIŞ YAP</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+                <div class="container-fluid">
+                    <div class="navbar-wrapper">HOŞ GELDİNİZ, @Model.UserModel.FullName</div>
+                    <div class="navbar-wrapper">Müşteri No: @Model.UserModel.CustomerNo</div>
+                </div>
+            </nav>
+            <!-- End Navbar -->
+            <div class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12">
+                            <div class="card">
+                                <div class="card-header card-header-warning">
+                                    <h4 class="card-title">BANKA HESAPLARIM</h4>
+                                </div>
+                                <div class="card-body table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="text-warning">
+                                        <th>IBAN</th>
+                                        <th>BAKIYE</th>
+                                        <th>OLUŞTURULMA TARIHI</th>
+                                        <thead />
+
+                                        <tbody>
+                                            @foreach (BankAccountModel bankAccount in Model.BankAccountsModel.BankAccounts)
+                                            {
+                                            <tr>
+                                                <td>@Model.UserModel.CustomerNo-@bankAccount.No</td>
+                                                <td>@bankAccount.Balance ₺</td>
+                                                <td>@bankAccount.CreatedDate</td>
+
+                                            </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-md-12">
+                            <div class="card">
+                                <div class="card-header card-header-warning">
+                                    <h4 class="card-title">SON İŞLEMLERİM</h4>
+
+                                </div>
+                                <div class="card-body table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="text-warning">
+                                        <th>GÖNDEREN IBAN</th>
+                                        <th>ALICI IBAN</th>
+                                        <th>TİP</th>
+                                        <th>TARİH</th>
+                                        <th>TUTAR</th>
+                                        <th>AÇIKLAMA</th>
+                                        <thead />
+
+                                        <tbody>
+                                            @foreach (TransactionModel transaction in Model.TransactionsModel.transactions)
+                                            {
+
+                                                <tr>
+                                                    <td>@transaction.senderCustomerNo-@transaction.senderBankAccountNo</td>
+                                                    <td>@transaction.receiverCustomerNo-@transaction.receiverBankAccountNo</td>
+
+                                                    @if (transaction.receiverCustomerNo == transaction.senderCustomerNo)
+                                                    {
+                                                        <td>
+                                                            Virman
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            Havale
+                                                        </td>
+                                                    }
+                                                    <td>@transaction.date</td>
+                                                    <td>@transaction.amount ₺</td>
+                                                    <td style="overflow: hidden;">@transaction.summary</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/js/material-dashboard.js"></script>
+</body>
+</html>
+
+<script>
+</script>
