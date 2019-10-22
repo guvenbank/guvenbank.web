@@ -1,0 +1,292 @@
+﻿
+@{
+    ViewData["Title"] = "İşlemler";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GUVENBANK</title>
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/font-awesome/css/fontawesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/material-dashboard.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="wrapper ">
+        <div class="sidebar" data-color="purple" data-background-color="white" data-image="~/images/sidebar-1.jpg">
+            <div class="logo">
+                <a href="#" class="simple-text logo-normal">
+                    GÜVENBANK
+                </a>
+            </div>
+            <div class="sidebar-wrapper">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="./dashboard.html">
+                            <i class="material-icons">dashboard</i>
+                            <p>ANASAYFA</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="./user.html">
+                            <i class="material-icons">person</i>
+                            <p>BİLGİLERİM</p>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/Transaction">
+                            <i class="material-icons">content_paste</i>
+                            <p>TRANSFERLER</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/BankAccount">
+                            <i class="material-icons">library_books</i>
+                            <p>BANKA HESAPLARIM</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+                <div class="container-fluid">
+                    <div class="navbar-wrapper">HOŞ GELDİNİZ, @Model.UserModel.FullName</div>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="navbar-toggler-icon icon-bar"></span>
+                        <span class="navbar-toggler-icon icon-bar"></span>
+                        <span class="navbar-toggler-icon icon-bar"></span>
+                    </button>
+                </div>
+            </nav>
+            <!-- End Navbar -->
+            <div class="content">
+                <div class="container-fluid">
+
+                    <div class="alert alert-danger" id="error" style="display: none;"> </div>
+                    <input type="hidden" id="customerNo" value="@Model.UserModel.CustomerNo" />
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12">
+                            <div class="card">
+                                <div class="card-header card-header-warning">
+                                    <h4 class="card-title">TRANSFER YAP</h4>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="form-group">
+                                        <label for="inputType">Transfer Türü</label>
+                                        <select class="form-control" id="inputType">
+                                            <option>Havale</option>
+                                            <option>Virman</option>
+                                        </select>
+                                        <input type="hidden" id="inputSelectedType" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="inputSender">Gönderilecek Hesap</label>
+                                        <select class="form-control" id="inputSender">
+                                            <option>1001 - 50 ₺</option>
+                                            <option>1002 - 0 ₺</option>
+                                            <option>1003 - 950 ₺</option>
+                                        </select>
+                                        <input type="hidden" id="inputSelectedSender" />
+
+                                    </div>
+
+                                    <div class="form-group" id="formGroupHavale">
+                                        <label for="inputIban">Alıcı IBAN</label>
+                                        <input type="text" class="form-control" id="inputIban" placeholder="12345678-1002">
+                                    </div>
+
+                                    <div class="form-group" id="formGroupVirman">
+                                        <label for="inputReceiver">Alıcı Hesap</label>
+                                        <select class="form-control" id="inputReceiver">
+                                            <option>1001 - 50 ₺</option>
+                                            <option>1002 - 0 ₺</option>
+                                            <option>1003 - 950 ₺</option>
+                                        </select>
+                                        <input type="hidden" id="inputSelectedReceiver" />
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="inputAmount">Miktar</label>
+                                        <input type="text" class="form-control" id="inputAmount" placeholder="500">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="inputSummary">Açıklama</label>
+                                        <textarea class="form-control" id="inputSummary" rows="3" placeholder="Araç ödemesi"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button class="btn btn-secondary" type="reset" id="btnClear">Temizle</button>
+                                        <button type="submit" class="btn btn-primary" id="btnSend">Gönder</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12">
+                            <div class="card">
+                                <div class="card-header card-header-warning">
+                                    <h4 class="card-title">SON İŞLEMLERİM</h4>
+                                </div>
+                                <div class="card-body table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="text-warning">
+                                        <th>GELEN HESAP NO</th>
+                                        <th>GIDEN / GELEN</th>
+                                        <th>TARIH</th>
+                                        <th>TUTAR</th>
+                                        <th>AÇIKLAMA</th>
+                                        </thead>
+
+                                        <tbody>
+                                            @foreach (TransactionModel transaction in Model.TransactionsModel.transactions)
+                                            {
+
+                                                <tr>
+                                                    <td>@Model.UserModel.CustomerNo - @transaction.receiverBankAccountNo</td>
+                                                    @if (transaction.receiverCustomerNo == @Model.UserModel.CustomerNo)
+                                                    {
+                                                        <td>
+                                                            GELEN
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            GİDEN
+                                                        </td>
+                                                    }
+                                                    <td>@transaction.date</td>
+                                                    <td>@transaction.amount ₺</td>
+                                                    <td>@transaction.summary</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Popup Para Yatır -->
+                        <div class="modal fade" id="popupBakiye" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">HESABA PARA YATIRMA</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="popupVal" />
+                                        <input type="text" id="popupBalance" onkeypress="return isNumberKey(event)" /> ₺
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İPTAL</button>
+                                        <button type="button" class="btn btn-primary" id="btnOkParaYatir">PARA YATIR</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Popup Hesap Sil -->
+                        <div class="modal fade" id="popupHesapSil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">HESABI SİLME</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label>Hesabınız kalıcı olarak silinecektir. Kalıcı olarak silmek istiyor musunuz ? </label>
+                                        <input type="hidden" id="popupHesapSilVal" />
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İPTAL</button>
+                                        <button type="button" class="btn btn-primary" id="btnOkHesapSil">EVET</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/js/material-dashboard.js"></script>
+</body>
+</html>
+
+<script>
+    $('#formGroupVirman').hide();
+
+    $('#inputType').change(function () {
+        if ($('#inputType option:selected').val() == "Havale") {
+            $('#formGroupVirman').hide();
+            $('#formGroupHavale').show();
+            $('#inputSelectedType').val("1");
+        }
+        else {
+            $('#formGroupHavale').hide();
+            $('#formGroupVirman').show();
+            $('#inputSelectedType').val("0");
+        }
+    });
+
+    $('#btnClear').click(function () {
+        $('#inputIban').val("");
+        $('#inputAmount').val("");
+        $('#inputSummary').val("");
+    });
+
+    $('#btnClear').click(function () {
+        var iban = $('#inputIban').val();
+
+        var senderCustomerNo = $('#customerNo').val();
+        var amount = $('#inputAmount').val();
+        var summary = $('#inputSummary').val();
+        var type = $('#inputSelectedType').val();
+        var senderBankAccountNo = $('#inputSelectedSender').val();
+
+        var receiverCustomerNo = null;
+        var receiverBankAccountNo = null;
+
+        if (type == "1") {
+            receiverCustomerNo = iban.split('-')[0];
+            receiverBankAccountNo = iban.split('-')[1];
+        }
+        else {
+            receiverCustomerNo = senderCustomerNo;
+            receiverBankAccountNo = $('#inputSelectedReceiver').val();
+        }
+
+        var date = Date();
+
+        //POST
+
+    });
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+    }
+</script>
