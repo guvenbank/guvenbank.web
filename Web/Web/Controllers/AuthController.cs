@@ -42,7 +42,7 @@ namespace Web.Controllers
             JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
 
-            if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
+            if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "success"))
             {
                 HttpContext.Session.SetString("token", responseJson["token"].ToString());
                 HttpContext.Session.SetString("tc", responseJson["tc"].ToString());
@@ -51,20 +51,16 @@ namespace Web.Controllers
                 HttpContext.Session.SetString("phoneNumber", responseJson["phoneNumber"].ToString());
                 HttpContext.Session.SetString("no", responseJson["no"].ToString());
                 return RedirectToAction("Index", "Account");
-
             }
-
-            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 400))
+            else if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
             {
-                ViewBag.error = true;
-                return View();
-                //databag ile şifre yada tc yanlış hatası döndür.
+                ViewBag.Error = responseJson["message"].ToString();
             }
-
             else
             {
-                // login ekranına dön hata oluştu yazısı yazdır.
+                ViewBag.ErrorMessage = "Bir hata oluştu.";
             }
+
             return View();
         }
 
@@ -84,7 +80,7 @@ namespace Web.Controllers
 
             JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
-            if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
+            if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "success"))
             {
                 HttpContext.Session.SetString("token", responseJson["token"].ToString());
                 HttpContext.Session.SetString("tc", responseJson["tc"].ToString());
@@ -94,17 +90,15 @@ namespace Web.Controllers
                 HttpContext.Session.SetString("no", responseJson["no"].ToString());
                 return RedirectToAction("Index", "Account");
             }
-            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 400))
+            else if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
             {
-                //databag ile hatayı döndür register sayfasına ve sayfada göster
-                ViewBag.error = true;
-
-                return View();
+                ViewBag.Error = responseJson["message"].ToString();
             }
             else
             {
-                // register ekranına dön hata oluştu yazısı yazdır.
+                ViewBag.ErrorMessage = "Bir hata oluştu.";
             }
+
             return View();
         }
 

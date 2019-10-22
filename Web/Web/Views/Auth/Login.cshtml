@@ -36,9 +36,9 @@
                     <form asp-controller="Account" asp-action="Login" method="post" role="form" class="login100-form validate-form" style="margin-top: -6%">
                         <span class="login100-form-title"> KULLANICI GİRİŞİ </span>
 
-                        @if (ViewBag.error == true)
+                        @if (!string.IsNullOrEmpty(ViewBag.Error))
                         {
-                            <div class="alert alert-danger" role="alert"> Kullanıcı adı veya şifre hatalı. </div>
+                            <div class="alert alert-danger" role="alert"> @ViewBag.Error </div>
                         }
 
                         <div class="wrap-input100 validate-input">

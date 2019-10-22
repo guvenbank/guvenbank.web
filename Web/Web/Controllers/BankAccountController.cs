@@ -30,20 +30,16 @@ namespace Web.Controllers
             JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
 
-            if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
+            if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
             {
-                return Ok();
+                ViewBag.Error = responseJson["message"].ToString();
             }
-
-            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 200))
-            {
-                return BadRequest();
-            }
-
             else
             {
-                return BadRequest();
+                ViewBag.ErrorMessage = "Bir hata oluştu.";
             }
+
+            return View();
         }
 
 
@@ -108,7 +104,6 @@ namespace Web.Controllers
                 return RedirectToAction("Register", "Auth");
                 //databag ile hatayı döndür register sayfasına ve sayfada göster
             }
-
             else
             {
                 // register ekranına dön hata oluştu yazısı yazdır.
@@ -137,21 +132,16 @@ namespace Web.Controllers
 
             JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
-
-            if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
+            if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
             {
-                return Ok();
+                ViewBag.Error = responseJson["message"].ToString();
             }
-
-            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 200))
-            {
-                return BadRequest();
-            }
-
             else
             {
-                return BadRequest();
+                ViewBag.ErrorMessage = "Bir hata oluştu.";
             }
+
+            return View();
         }
 
 
@@ -173,22 +163,16 @@ namespace Web.Controllers
 
             JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
-
-            if ((responseJson["status"].ToString() == "success") && (Convert.ToInt32(response.StatusCode) == 200))
+            if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
             {
-                return Ok();
+                ViewBag.Error = responseJson["message"].ToString();
             }
-
-            else if ((responseJson["status"].ToString() == "failed") && (Convert.ToInt32(response.StatusCode) == 200))
-            {
-                ViewBag.ErrorMessage = responseJson["message"].ToString();
-                return BadRequest();
-            }
-
             else
             {
-                return BadRequest();
+                ViewBag.ErrorMessage = "Bir hata oluştu.";
             }
+
+            return View();
         }
     }
 }
