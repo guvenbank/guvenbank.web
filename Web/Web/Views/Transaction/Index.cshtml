@@ -1,4 +1,4 @@
-﻿
+﻿@model HomePageModel
 @{
     ViewData["Title"] = "İşlemler";
 }
@@ -69,11 +69,11 @@
             <div class="content">
                 <div class="container-fluid">
 
-                    <div class="alert alert-danger" id="error" style="display: none;"> </div>
+                    <div class="alert alert-danger" id="message" style="display: none;"> </div>
                     <input type="hidden" id="customerNo" value="@Model.UserModel.CustomerNo" />
 
                     <div class="row">
-                        <div class="col-lg-6 col-md-12">
+                        <div class="col-lg-4 col-md-12">
                             <div class="card">
                                 <div class="card-header card-header-warning">
                                     <h4 class="card-title">TRANSFER YAP</h4>
@@ -92,9 +92,13 @@
                                     <div class="form-group">
                                         <label for="inputSender">Gönderilecek Hesap</label>
                                         <select class="form-control" id="inputSender">
-                                            <option>1001 - 50 ₺</option>
-                                            <option>1002 - 0 ₺</option>
-                                            <option>1003 - 950 ₺</option>
+                                            @foreach (BankAccountModel bankAccountModel in Model.BankAccountsModel.BankAccounts)
+                                            {
+                                                if (bankAccountModel.Balance > 0)
+                                                {
+                                                    <option value="@bankAccountModel.No">@bankAccountModel.No - @bankAccountModel.Balance ₺</option>
+                                                }
+                                            }
                                         </select>
                                         <input type="hidden" id="inputSelectedSender" />
 
@@ -108,9 +112,10 @@
                                     <div class="form-group" id="formGroupVirman">
                                         <label for="inputReceiver">Alıcı Hesap</label>
                                         <select class="form-control" id="inputReceiver">
-                                            <option>1001 - 50 ₺</option>
-                                            <option>1002 - 0 ₺</option>
-                                            <option>1003 - 950 ₺</option>
+                                            @foreach (BankAccountModel bankAccountModel in Model.BankAccountsModel.BankAccounts)
+                                            {
+                                                <option value="@bankAccountModel.No">@bankAccountModel.No-@bankAccountModel.Balance ₺</option>
+                                            }
                                         </select>
                                         <input type="hidden" id="inputSelectedReceiver" />
 
@@ -123,7 +128,7 @@
 
                                     <div class="form-group">
                                         <label for="inputSummary">Açıklama</label>
-                                        <textarea class="form-control" id="inputSummary" rows="3" placeholder="Araç ödemesi"></textarea>
+                                        <textarea class="form-control" id="inputSummary" rows="3" placeholder="Araç ödemesi" maxlength="50"></textarea>
                                     </div>
 
                                     <div class="form-group">
@@ -134,7 +139,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6 col-md-12">
+                        <div class="col-lg-8 col-md-12">
                             <div class="card">
                                 <div class="card-header card-header-warning">
                                     <h4 class="card-title">SON İŞLEMLERİM</h4>
@@ -142,8 +147,9 @@
                                 <div class="card-body table-responsive">
                                     <table class="table table-hover">
                                         <thead class="text-warning">
-                                        <th>GELEN HESAP NO</th>
-                                        <th>GIDEN / GELEN</th>
+                                        <th>GÖNDEREN IBAN</th>
+                                        <th>ALICI IBAN</th>
+                                        <th>TİP</th>
                                         <th>TARIH</th>
                                         <th>TUTAR</th>
                                         <th>AÇIKLAMA</th>
@@ -153,24 +159,26 @@
                                             @foreach (TransactionModel transaction in Model.TransactionsModel.transactions)
                                             {
 
-                                                <tr>
-                                                    <td>@Model.UserModel.CustomerNo - @transaction.receiverBankAccountNo</td>
-                                                    @if (transaction.receiverCustomerNo == @Model.UserModel.CustomerNo)
-                                                    {
-                                                        <td>
-                                                            GELEN
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>
-                                                            GİDEN
-                                                        </td>
-                                                    }
-                                                    <td>@transaction.date</td>
-                                                    <td>@transaction.amount ₺</td>
-                                                    <td>@transaction.summary</td>
-                                                </tr>
+                                            <tr>
+                                                <td>@transaction.senderCustomerNo-@transaction.senderBankAccountNo</td>
+                                                <td>@transaction.receiverCustomerNo-@transaction.receiverBankAccountNo</td>
+
+                                                @if (transaction.receiverCustomerNo == transaction.senderCustomerNo)
+                                                {
+                                                    <td>
+                                                        Virman
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        Havale
+                                                    </td>
+                                                }
+                                                <td>@transaction.date</td>
+                                                <td>@transaction.amount ₺</td>
+                                                <td style="overflow: hidden;">@transaction.summary</td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -235,6 +243,9 @@
 
 <script>
     $('#formGroupVirman').hide();
+    $('#inputSelectedSender').val($('#inputSender option:selected').val());
+    $('#inputSelectedReceiver').val($('#inputReceiver option:selected').val());
+    $('#inputSelectedType').val("1");
 
     $('#inputType').change(function () {
         if ($('#inputType option:selected').val() == "Havale") {
@@ -249,36 +260,101 @@
         }
     });
 
+    $('#inputSender').change(function () {
+        $('#inputSelectedSender').val($('#inputSender option:selected').val());
+    });
+
+     $('#inputReceiver').change(function () {
+        $('#inputSelectedReceiver').val($('#inputReceiver option:selected').val());
+    });
+
     $('#btnClear').click(function () {
         $('#inputIban').val("");
         $('#inputAmount').val("");
         $('#inputSummary').val("");
     });
 
-    $('#btnClear').click(function () {
+    $('#btnSend').click(function () {
         var iban = $('#inputIban').val();
-
-        var senderCustomerNo = $('#customerNo').val();
-        var amount = $('#inputAmount').val();
-        var summary = $('#inputSummary').val();
         var type = $('#inputSelectedType').val();
-        var senderBankAccountNo = $('#inputSelectedSender').val();
-
-        var receiverCustomerNo = null;
-        var receiverBankAccountNo = null;
 
         if (type == "1") {
-            receiverCustomerNo = iban.split('-')[0];
-            receiverBankAccountNo = iban.split('-')[1];
+            
+            var myData = {
+                senderCustomerNo: $('#customerNo').val(),
+                amount: $('#inputAmount').val(),
+                summary: $('#inputSummary').val(),
+                type: $('#inputSelectedType').val(),
+                senderBankAccountNo: $('#inputSelectedSender').val(),
+                receiverCustomerNo: iban.split('-')[0],
+                receiverBankAccountNo: iban.split('-')[1]
+            }
+
+            $.ajax({
+                url: '/Transaction/External',
+                type: 'POST',
+                data: myData,
+                success: function () {
+                     document.location.reload();
+                },
+               error: function (res) {
+
+                    if (res.responseJSON.status == "failed")
+                    {
+                        $('#message').text(res.responseJSON.message);
+                        $('#message').css("visibility", "visible");
+                        $('#message').addClass("alert-danger");
+                        $('#closeModal').click();
+                        $('#message').fadeOut(6000);
+                    }
+                    else {
+                        $('#message').text("Bir sorun oluştu.");
+                        $('#message').css("visibility", "visible");
+                        $('#message').addClass("alert-danger");
+                        $('#closeModal').click();
+                        $('#message').fadeOut(6000);
+                    }
+                }
+            });
         }
         else {
-            receiverCustomerNo = senderCustomerNo;
-            receiverBankAccountNo = $('#inputSelectedReceiver').val();
+            
+            var myData = {
+                senderCustomerNo: $('#customerNo').val(),
+                amount: $('#inputAmount').val(),
+                summary: $('#inputSummary').val(),
+                type: $('#inputSelectedType').val(),
+                senderBankAccountNo: $('#inputSelectedSender').val(),
+                receiverCustomerNo: $('#customerNo').val(),
+                receiverBankAccountNo: $('#inputSelectedReceiver').val()
+            }
+
+            $.ajax({
+                url: '/Transaction/Internal',
+                type: 'POST',
+                data: myData,
+                success: function () {
+                     document.location.reload();
+                },
+               error: function (res) {
+                    if (res.responseJSON.status == "failed")
+                    {
+                        $('#message').text(res.responseJSON.message);
+                        $('#message').css("display", "block");
+                        $('#message').addClass("alert-danger");
+                        $('#closeModal').click();
+                        $('#message').fadeOut(6000);
+                    }
+                    else {
+                        $('#message').text("Bir sorun oluştu.");
+                        $('#message').css("display", "block");
+                        $('#message').addClass("alert-danger");
+                        $('#closeModal').click();
+                        $('#message').fadeOut(6000);
+                    }
+                }
+            });
         }
-
-        var date = Date();
-
-        //POST
 
     });
 
