@@ -27,6 +27,12 @@ namespace Web.Controllers
 
                 string responseBody = response.Content.ReadAsStringAsync().Result;
 
+                if (string.IsNullOrEmpty(responseBody))
+                {
+                    HttpContext.Session.SetString("token", "");
+                    return RedirectToAction("Index", "Home");
+                }
+
                 JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
 
                 TransactionsModel transactionsModel = JsonConvert.DeserializeObject<TransactionsModel>(responseBody);

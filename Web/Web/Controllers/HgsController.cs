@@ -12,7 +12,7 @@ using Web.Models;
 
 namespace Web.Controllers
 {
-    public class BankAccountController : Controller
+    public class HgsController : Controller
     {
         public IActionResult Index()
         {
@@ -62,39 +62,11 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Open()
-        {
-            HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
-
-            var content = new StringContent("", Encoding.UTF8, "application/json");
-            HttpResponseMessage response = httpClient.PostAsync("/api/BankAccount", content).Result;
-
-            string responseBody = response.Content.ReadAsStringAsync().Result;
-
-            JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
-
-
-            if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
-            {
-                return BadRequest(new { status = "failed", message = responseJson["message"].ToString() });
-            }
-            else if ((Convert.ToInt32(response.StatusCode) != 200))
-            {
-                return BadRequest(new { status = "failed", message = "Bir hata oluştu." });
-            }
-
-            return Ok();
-        }
-
-
-        [HttpPost]
-        public IActionResult Deposit(string No, string Amount)
+        public IActionResult Deposit([FromBody] HgsModel hgsModel)
         {
             DepositModel depositModel = new DepositModel();
-            depositModel.No = Convert.ToInt32(No);
-            depositModel.Amount = Convert.ToDecimal(Amount);
+            depositModel.No = hgsModel.BankAccountNo;
+            depositModel.Amount = hgsModel.Balance;
 
             HttpClient httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
@@ -103,7 +75,7 @@ namespace Web.Controllers
             string jsonData = JsonConvert.SerializeObject(depositModel);
 
             var content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = httpClient.PostAsync("/api/BankAccount/deposit", content).Result;
+            HttpResponseMessage response = httpClient.PostAsync("/api/BankAccount/withdraw", content).Result;
 
             string responseBody = response.Content.ReadAsStringAsync().Result;
 
@@ -118,18 +90,37 @@ namespace Web.Controllers
                 return BadRequest(new { status = "failed", message = "Bir hata oluştu." });
             }
 
-            return Ok();
+            httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("http://207.154.196.92:5003/");
+
+            jsonData = JsonConvert.SerializeObject(hgsModel);
+
+            content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
+            response = httpClient.PostAsync("/api/account/deposit", content).Result;
+
+            responseBody = response.Content.ReadAsStringAsync().Result;
+
+            responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
+
+            if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
+            {
+                return BadRequest(new { status = "failed", message = responseJson["message"].ToString() });
+            }
+            else if ((Convert.ToInt32(response.StatusCode) != 200))
+            {
+                return BadRequest(new { status = "failed", message = "Bir hata oluştu." });
+            }
+
+            return Ok(responseJson);
         }
 
-
-        [HttpDelete]
-        public IActionResult Delete(string No)
+        [HttpPost]
+        public IActionResult Get([FromBody] HgsNoModel hgsNoModel)
         {
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+            httpClient.BaseAddress = new Uri("http://207.154.196.92:5003/");
 
-            HttpResponseMessage response = httpClient.DeleteAsync("/api/BankAccount/" + No).Result;
+            HttpResponseMessage response = httpClient.GetAsync("/api/account/" + hgsNoModel.HgsNo).Result;
 
             string responseBody = response.Content.ReadAsStringAsync().Result;
 
@@ -139,12 +130,69 @@ namespace Web.Controllers
             {
                 return BadRequest(new { status = "failed", message = responseJson["message"].ToString() });
             }
-            else if((Convert.ToInt32(response.StatusCode) != 200))
+            else if ((Convert.ToInt32(response.StatusCode) != 200))
             {
                 return BadRequest(new { status = "failed", message = "Bir hata oluştu." });
             }
 
-            return Ok();
+            return Ok(responseJson);
+        }
+
+        [HttpGet]
+        public IActionResult Buy()
+        {
+            string tc = HttpContext.Session.GetString("tc");
+            TcModel tcModel = new TcModel { TcNo = tc };
+
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("http://207.154.196.92:5003/");
+
+            string jsonData = JsonConvert.SerializeObject(tcModel);
+
+            var content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = httpClient.PostAsync("/api/account/", content).Result;
+
+            string responseBody = response.Content.ReadAsStringAsync().Result;
+
+            JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
+
+            if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
+            {
+                return BadRequest(new { status = "failed", message = responseJson["message"].ToString() });
+            }
+            else if ((Convert.ToInt32(response.StatusCode) != 200))
+            {
+                return BadRequest(new { status = "failed", message = "Bir hata oluştu." });
+            }
+
+            return Ok(responseJson);
+        }
+
+        [HttpPost]
+        public IActionResult Find([FromBody] TcModel tcModel)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("http://207.154.196.92:5003/");
+
+            string jsonData = JsonConvert.SerializeObject(tcModel);
+
+            var content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = httpClient.PostAsync("/api/account/find", content).Result;
+
+            string responseBody = response.Content.ReadAsStringAsync().Result;
+
+            JObject responseJson = JsonConvert.DeserializeObject(responseBody) as JObject;
+
+            if ((Convert.ToInt32(response.StatusCode) == 200) && (responseJson["status"].ToString() == "failed"))
+            {
+                return BadRequest(new { status = "failed", message = responseJson["message"].ToString() });
+            }
+            else if ((Convert.ToInt32(response.StatusCode) != 200))
+            {
+                return BadRequest(new { status = "failed", message = "Bir hata oluştu." });
+            }
+
+            return Ok(responseJson);
         }
     }
 }

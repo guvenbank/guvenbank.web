@@ -1,0 +1,351 @@
+﻿@model HomePageModel
+@{
+    ViewData["Title"] = "HGS İşlemleri";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GUVENBANK</title>
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/font-awesome/css/fontawesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/material-dashboard.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="wrapper" style="background-image: url('./images/hgs.jpg')">
+        <div class="sidebar" data-color="purple" data-background-color="white" data-image="~/images/sidebar-1.jpg">
+            <div class="logo">
+                <a href="#" class="simple-text logo-normal">
+                    GÜVENBANK
+                </a>
+            </div>
+            <div class="sidebar-wrapper">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="material-icons">dashboard</i>
+                            <p>ANASAYFA</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/Account">
+                            <i class="material-icons">person</i>
+                            <p>BİLGİLERİM</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Transaction">
+                            <i class="material-icons">content_paste</i>
+                            <p>TRANSFERLER</p>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/BankAccount">
+                            <i class="material-icons">library_books</i>
+                            <p>BANKA HESAPLARIM</p>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/Hgs">
+                            <i class="material-icons">offline_bolt</i>
+                            <p>HGS İŞLEMLERİ</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Auth/Logout">
+                            <i class="material-icons">logout</i>
+                            <p>ÇIKIŞ YAP</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+                <div class="container-fluid" style="color: white;">
+                    <div class="navbar-wrapper">HOŞ GELDİNİZ, @Model.UserModel.FullName</div>
+                    <div class="navbar-wrapper">Müşteri No: @Model.UserModel.CustomerNo</div>
+                </div>
+            </nav>
+            <!-- End Navbar -->
+            <div class="content">
+                <div class="container-fluid">
+
+                    <div class="alert" role="alert" id="message" style="display: none;">  </div>
+                    <input type="hidden" id="customerNo" value="@Model.UserModel.CustomerNo" />
+
+                    <div class="row">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-8 col-md-12">
+                            <div class="card" style="background: none; box-shadow: none;">
+                                <button type="button" class="btn btn-danger" id="btnBuyHgs"> YENİ BİR HGS SATIN AL </button>
+                            </div>
+                        </div>
+                        <div class="col-lg-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12">
+                            <div class="card">
+                                <div class="card-header card-header-warning">
+                                    <h4 class="card-title">HGS NO ÖĞREN</h4>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="form-group" id="formGroupHavale">
+                                        <label for="inputCheckTcNo">TC Kimlik No</label>
+                                        <input id="inputCheckTcNo" type="text" class="form-control" placeholder="54874511254" onkeypress="return isNumberKey(event)" maxlength="11">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-danger" id="btnFind">Öğren</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="card">
+                                <div class="card-header card-header-warning">
+                                    <h4 class="card-title">BAKİYE YÜKLE</h4>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="form-group" id="formGroupHavale">
+                                        <label for="inputSendHgsNo">HGS No</label>
+                                        <input id="inputSendHgsNo" type="text" class="form-control" placeholder="10035" onkeypress="return isNumberKey(event)" maxlength="9">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="inputAmount">Tutar</label>
+                                        <input id="inputAmount" type="text" class="form-control" placeholder="500" onkeypress="return isNumberKey(event)" maxlength="5">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="inputSender">Tutarın temin edileceği hesap</label>
+                                        <select class="form-control" id="inputSender">
+                                            @foreach (BankAccountModel bankAccountModel in Model.BankAccountsModel.BankAccounts)
+                                            {
+                                                if (bankAccountModel.Balance > 0)
+                                                {
+                                                    <option value="@bankAccountModel.No">@bankAccountModel.No - @bankAccountModel.Balance ₺</option>
+                                                }
+                                            }
+                                        </select>
+                                        <input type="hidden" id="inputSelectedSender" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-danger" id="btnSend">Yükle</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="card">
+                                <div class="card-header card-header-warning">
+                                    <h4 class="card-title">BAKİYE SORGULA</h4>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="form-group" id="formGroupHavale">
+                                        <label for="inHgsNo">HGS No</label>
+                                        <input id="inHgsNo" type="text" class="form-control" placeholder="10035" onkeypress="return isNumberKey(event)" maxlength="9">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-danger" id="btnCheck">Sorgula</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/js/material-dashboard.js"></script>
+</body>
+</html>
+
+<script>
+    $('#inputSelectedSender').val($('#inputSender option:selected').val());
+
+    $('#inputSender').change(function () {
+        $('#inputSelectedSender').val($('#inputSender option:selected').val());
+    });
+
+    $('#btnSend').click(function () {
+
+        var sendingData = {
+            HgsNo: $('#inputSendHgsNo').val(),
+            Balance: $('#inputAmount').val(),
+            BankAccountNo: $('#inputSelectedSender').val(),
+        }
+
+        sendingData = JSON.stringify(sendingData);
+
+        $.ajax({
+            url: '/Hgs/Deposit',
+            type: 'POST',
+            contentType: 'application/json',
+            data: sendingData,
+            success: function (res) {
+
+                $('#message').text("Bakiye başarıyla yüklendi. Güncel Bakiyeniz: " + res.balance + " ₺");
+                $('#message').css("display", "block");
+                $('#message').addClass("alert-success");
+                $('#message').removeClass("alert-danger");
+
+            },
+            error: function (res) {
+
+                if (res.responseJSON.status == "failed") {
+                    $('#message').text(res.responseJSON.message);
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#message').removeClass("alert-success");
+
+                }
+                else {
+                    $('#message').text("Bir sorun oluştu.");
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#message').removeClass("alert-success");
+                }
+            }
+        });
+
+    });
+
+    $('#btnCheck').click(function () {
+
+        var sendingData = {
+            HgsNo: $('#inHgsNo').val()
+        }
+
+        sendingData = JSON.stringify(sendingData);
+
+        $.ajax({
+            url: '/Hgs/Get',
+            type: 'POST',
+            data: sendingData,
+            contentType: "application/json",
+            success: function (res) {
+                $('#message').text("HGS BAKIYENIZ: " + res.balance + " ₺");
+                $('#message').css("display", "block");
+                $('#message').addClass("alert-success");
+                $('#message').removeClass("alert-danger");
+
+            },
+            error: function (res) {
+
+                if (res.responseJSON.status == "failed") {
+                    $('#message').text(res.responseJSON.message);
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#message').removeClass("alert-success");
+
+                }
+                else {
+                    $('#message').text("Bir sorun oluştu.");
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#message').removeClass("alert-success");
+
+                }
+            }
+        });
+
+    });
+
+    $('#btnFind').click(function () {
+        
+        var sendingData = {
+            TcNo: $('#inputCheckTcNo').val(),
+        };
+
+        sendingData = JSON.stringify(sendingData);
+
+        $.ajax({
+            url: '/Hgs/Find',
+            type: 'POST',
+            contentType: 'application/json',
+            data: sendingData,
+            dataType: "json",
+            success: function (res) {
+                $('#message').text("HGS NUMARANIZ: " + res.hgsNo);
+                $('#message').css("display", "block");
+                $('#message').addClass("alert-success");
+                $('#message').removeClass("alert-danger");
+
+            },
+            error: function (res) {
+
+                if (res.responseJSON.status == "failed") {
+                    $('#message').text(res.responseJSON.message);
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#message').removeClass("alert-success");
+
+                }
+                else {
+                    $('#message').text("Bir sorun oluştu.");
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#message').removeClass("alert-success");
+
+                }
+            }
+        });
+
+    });
+
+    $('#btnBuyHgs').click(function () {
+        $.ajax({
+            url: '/Hgs/Buy',
+            type: 'GET',
+            success: function (res) {
+                $('#message').text("HGS satın aldınız. HGS NUMARANIZ: " + res.hgsNo);
+                $('#message').css("display", "block");
+                $('#message').addClass("alert-success");
+                $('#message').removeClass("alert-danger");
+
+            },
+            error: function (res) {
+
+                if (res.responseJSON.status == "failed") {
+                    $('#message').text(res.responseJSON.message);
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#message').removeClass("alert-success");
+
+                }
+                else {
+                    $('#message').text("Bir sorun oluştu.");
+                    $('#message').css("display", "block");
+                    $('#message').addClass("alert-danger");
+                    $('#message').removeClass("alert-success");
+
+                }
+            }
+        });
+
+    });
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+
+        if (charCode > 31 && (charCode < 45 || charCode > 57))
+                return false;
+            return true;
+    }
+</script>
