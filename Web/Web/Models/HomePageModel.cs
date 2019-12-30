@@ -13,6 +13,8 @@ namespace Web.Models
 
         public BankAccountsModel BankAccountsModel { get; set; }
 
+        public CreditModel CreditModel { get; set; }
+
         //bankaccount
     }
 }
