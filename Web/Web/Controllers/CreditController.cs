@@ -62,30 +62,38 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(CreditModel creditModel)
+        public IActionResult Post([FromBody] CreditModel creditModel)
         {
-            
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("http://ml.python.herokuapp.com/");
+            httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
 
-            //burda get yapıp kredi sayısını öğren modeldeki kredi sayısına at
-
-            string jsonData = JsonConvert.SerializeObject(creditModel);
-
-            var content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = httpClient.PostAsync("/api", content).Result;
+            HttpResponseMessage response = httpClient.GetAsync("api/customer").Result;
 
             string responseBody = response.Content.ReadAsStringAsync().Result;
 
-            if (responseBody == "1")
+            creditModel.aldigi_kredi_sayi = Convert.ToInt32(responseBody.Remove(0, responseBody.IndexOf("creditNumber") + 14).Split('}')[0]);
+            string jsonData = JsonConvert.SerializeObject(creditModel);
+
+            httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("http://ml-python.herokuapp.com/");
+            var content = new StringContent(jsonData.ToString(), Encoding.UTF8, "application/json");
+            response = httpClient.PostAsync("/api", content).Result;
+
+            responseBody = response.Content.ReadAsStringAsync().Result;
+
+            if (responseBody.Contains("0"))
             {
-                return Ok(new { status = "success", message = "Kredi başvurunuz olumlu sonuçlanmıştır" });
-                //veri tabanına kredi adedini 1 arttır.
+                httpClient = new HttpClient();
+                httpClient.BaseAddress = new Uri("http://207.154.196.92:5002/");
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                var res = httpClient.PostAsync("api/customer", null).Result;
+
+                return Ok(new { status = "success", message = "Kredi başvurunuz olumlu sonuçlanmıştır." });
             }
             else
             {
-                return Ok(new { status = "failed", message = "Kredi başvurunuz olumsuz sonuçlanmıştır." });
+                return BadRequest(new { status = "failed", message = "Maalesef size kredi veremiyoruz." });
             }
         }
     }

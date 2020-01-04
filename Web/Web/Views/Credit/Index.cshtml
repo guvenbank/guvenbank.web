@@ -16,7 +16,7 @@
     <link href="~/css/material-dashboard.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <div class="wrapper" style="background-image: url('./images/hgs.jpg')">
+    <div class="wrapper">
         <div class="sidebar" data-color="purple" data-background-color="white" data-image="~/images/sidebar-1.jpg">
             <div class="logo">
                 <a href="#" class="simple-text logo-normal">
@@ -49,15 +49,15 @@
                             <p>BANKA HESAPLARIM</p>
                         </a>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a class="nav-link" href="/Hgs">
                             <i class="material-icons">offline_bolt</i>
                             <p>HGS İŞLEMLERİ</p>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a class="nav-link" href="/Credit">
-                            <i class="material-icons">logout</i>
+                            <i class="material-icons">attach_money</i>
                             <p>KREDİ İŞLEMLERİ</p>
                         </a>
                     </li>
@@ -163,12 +163,11 @@
             contentType: 'application/json',
             data: sendingData,
             success: function (res) {
-
-                $('#message').text(res.responseJSON.message);
+                console.log(res);
+                $('#message').text(res.message);
                 $('#message').css("display", "block");
                 $('#message').addClass("alert-success");
                 $('#message').removeClass("alert-danger");
-
             },
             error: function (res) {
 
@@ -177,7 +176,6 @@
                     $('#message').css("display", "block");
                     $('#message').addClass("alert-danger");
                     $('#message').removeClass("alert-success");
-
                 }
                 else {
                     $('#message').text("Bir sorun oluştu.");

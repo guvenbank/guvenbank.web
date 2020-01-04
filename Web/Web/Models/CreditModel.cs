@@ -19,14 +19,14 @@ namespace Web.Models
 
         public enum HasHome : byte
         {
-            VAR,
-            YOK
+            YOK,
+            VAR
         }
 
         public enum HasPhone : byte
         {
-            VAR,
-            YOK
+            YOK,
+            VAR
         }
     }
 }
